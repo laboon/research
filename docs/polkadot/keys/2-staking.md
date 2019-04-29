@@ -1,9 +1,9 @@
 
 ## Nomination
 
-In some sense, all public keys derive their authority from some combination of ceremonies and certificates, with certificate root keys deriving tehir authority entirely from ceremonies.  As an example, trust-on-first-use schemes might be considered a pair of cerimonies, the key being associated to an identity first, and the threat of other comparing keys fingerprints.
+In some sense, all public keys derive their authority from some combination of ceremonies and certificates, with certificate root keys deriving their authority entirely from ceremonies.  As an example, trust-on-first-use schemes might be considered a pair of cerimonies, the key being associated to an identity first, and the threat of other comparing keys fingerprints.
 
-We apply this perspective to a consensus algorithm for a proof-of-stake blockchains like polkadot by regarding the chain itself as one large ceremony and treating the staked/bonded account as the root of trust.  We then have certificates issued by these staked account keys that authenticate both the session keys used by Polkadot validators and block producers, as well as the long-term transport layer authentication keys required by TLS or Noise (see concerns about libp2p's secio).  
+We apply this perspective to a consensus algorithm for a proof-of-stake blockchains like polkadot by regarding the chain itself as one large ceremony and treating the staked/bonded account as the root of trust.  We then have certificates issued by these staked account keys that authenticate both the session keys used by Polkadot validators and block producers, as well as the long-term transport layer authentication keys required by TLS or Noise (see concerns about libp2p's secio).
 
 ### Stash account keys
 
@@ -18,11 +18,11 @@ We might require additional metadata in $T$ so that delayed slashing cannot impa
 
 ### Stake controller account keys
 
-We must support, or may even require, that these session keys and TLS keys rotate periodically.  At the same time, we must support stash account keys being air gapped, which prevents them from signing anything regularly.  In consequence, we require another layer, called "stake controller account keys", that lies strictly between, and control the nomination of or delegation from stash account keys to session keys. 
+We must support, or may even require, that these session keys and TLS keys rotate periodically.  At the same time, we must support stash account keys being air gapped, which prevents them from signing anything regularly.  In consequence, we require another layer, called "stake controller account keys", that lies strictly between, and control the nomination of or delegation from stash account keys to session keys.
 
-As we require small transactions associated to staking, these "stake controller account keys" are actual account keys with their own separate balance, usually much smaller than the "stash account key" for which they manage nomination/delegation. 
+As we require small transactions associated to staking, these "stake controller account keys" are actual account keys with their own separate balance, usually much smaller than the "stash account key" for which they manage nomination/delegation.
 
-In future, we might permit the certificate from the stash account key to limit the actions of a controller keys, which improves our stakers' security when certain functions permit less slashing.  In particular, we might admit modes for fishermen and block producers that prohibit nominating or running a validator.  
+In future, we might permit the certificate from the stash account key to limit the actions of a controller keys, which improves our stakers' security when certain functions permit less slashing.  In particular, we might admit modes for fishermen and block producers that prohibit nominating or running a validator.
 
 At the moment however, we only support one such slashing level, so all mode transitions are functions of the controller key itself, as described in [2].
 
@@ -30,7 +30,7 @@ At the moment however, we only support one such slashing level, so all mode tran
 
 We could either store certificates with account data, or else provide certificates in protocol interactions, but almost surely the certificate delegating from the staked account to the nominator key belongs in the account data.
 
-We should take care with the certificates from the controller key to the session key because the session key requires a proof-of-possesion.  If we place them into the controller account, then there is a temptation to trust them and not check the proof-of-possesion ourselves.  We cannot necessarily trust the chain for proofs-of-possesion because doing so might provides escalation for attackers who succeed in posting any invalid data.  If we provide them in interactions then there is a temptation to check the proof-of-possesion repeatedly.  We should evaluate either attaching a self-checked flag to the staked account database vs storing session keys in some self-checked account database separate from the account database for which nodes trust the chain.  
+We should take care with the certificates from the controller key to the session key because the session key requires a proof-of-possesion.  If we place them into the controller account, then there is a temptation to trust them and not check the proof-of-possesion ourselves.  We cannot necessarily trust the chain for proofs-of-possesion because doing so might provides escalation for attackers who succeed in posting any invalid data.  If we provide them in interactions then there is a temptation to check the proof-of-possesion repeatedly.  We should evaluate either attaching a self-checked flag to the staked account database vs storing session keys in some self-checked account database separate from the account database for which nodes trust the chain.
 
 ### Certificate size
 
@@ -40,6 +40,3 @@ We could save some space by using implicit certificates to issue nominator keys,
 
 [1] https://github.com/paritytech/substrate/pull/1782#discussion_r260265815
 [2] https://github.com/paritytech/substrate/blob/1a2ec9eec1fe9b3cc2677bac629fd7e9b0f6cf8e/srml/staking/Staking.md aka https://github.com/paritytech/substrate/commit/1a2ec9eec1fe9b3cc2677bac629fd7e9b0f6cf8e
-
-
-
